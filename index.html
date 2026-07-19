@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FutbolKits — Official Match Jerseys</title>
+
+  <!-- Display face: condensed, bold, built for shirt numbers & team names -->
+  <!-- Body face: clean grotesk for readability -->
+  <!-- Utility face: mono, used for prices & SKU-style meta data -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============ TOP NAV ============ -->
+  <header class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="#" aria-label="FutbolKits home">
+        <span class="logo-mark">FK</span>
+        <span class="logo-word">Futbol<em>Kits</em></span>
+      </a>
+
+      <div class="nav-search">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search team, country or league…"
+          aria-label="Search jerseys"
+        />
+        <svg viewBox="0 0 24 24" class="icon-search" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <button class="cart-trigger" id="cartTrigger" aria-label="Open shopping cart">
+        <svg viewBox="0 0 24 24" class="icon-cart" aria-hidden="true">
+          <path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
+            d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6" />
+          <circle cx="9" cy="21" r="1.4" fill="currentColor"/>
+          <circle cx="18" cy="21" r="1.4" fill="currentColor"/>
+        </svg>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ HERO / KICKOFF STRIP ============ -->
+  <section class="kickoff-strip">
+    <div class="kickoff-inner">
+      <p class="kickoff-eyebrow">2026 CYCLE — OFFICIAL REPLICAS</p>
+      <h1 class="kickoff-title">Wear the badge.<br/>Own the match.</h1>
+      <p class="kickoff-sub">Authentic national team kits, sourced for supporters who don't just watch the tournament — they suit up for it.</p>
+    </div>
+  </section>
+
+  <!-- ============ MAIN CATALOG LAYOUT ============ -->
+  <main class="catalog-layout">
+
+    <!-- Filter sidebar -->
+    <aside class="filters" aria-label="Filter jerseys">
+      <div class="filters-block">
+        <h2 class="filters-title">League</h2>
+        <div class="filter-group" id="leagueFilters">
+          <label class="filter-pill">
+            <input type="radio" name="league" value="all" checked />
+            <span>All Competitions</span>
+          </label>
+          <label class="filter-pill">
+            <input type="radio" name="league" value="World Cup" />
+            <span>World Cup</span>
+          </label>
+          <label class="filter-pill">
+            <input type="radio" name="league" value="Premier League" />
+            <span>Premier League</span>
+          </label>
+          <label class="filter-pill">
+            <input type="radio" name="league" value="La Liga" />
+            <span>La Liga</span>
+          </label>
+          <label class="filter-pill">
+            <input type="radio" name="league" value="Serie A" />
+            <span>Serie A</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="filters-block">
+        <h2 class="filters-title">Sort by price</h2>
+        <select id="sortSelect" class="sort-select">
+          <option value="none">Featured</option>
+          <option value="asc">Price: Low to High</option>
+          <option value="desc">Price: High to Low</option>
+        </select>
+      </div>
+
+      <div class="filters-block filters-note">
+        <p><strong id="resultCount">0</strong> kits match your filters.</p>
+      </div>
+    </aside>
+
+    <!-- Product grid -->
+    <section class="product-section">
+      <div id="productGrid" class="product-grid" aria-live="polite">
+        <!-- Product cards are injected here by app.js -->
+      </div>
+      <p id="emptyState" class="empty-state" hidden>
+        No jerseys match that search. Try a different team or clear your filters.
+      </p>
+    </section>
+  </main>
+
+  <!-- ============ CART DRAWER (slide-out) ============ -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
+    <div class="cart-header">
+      <h2>Your Kit Bag</h2>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">✕</button>
+    </div>
+
+    <div class="cart-items" id="cartItems">
+      <!-- Cart line items injected by app.js -->
+      <p class="cart-empty" id="cartEmptyMsg">Your bag is empty. Add a jersey to get started.</p>
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal</span>
+        <span id="cartSubtotal" class="cart-subtotal-value">$0.00</span>
+      </div>
+      <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+      <p class="cart-fineprint">Shipping & taxes calculated at checkout.</p>
+    </div>
+  </aside>
+
+  <!-- Card template (cloned per product by app.js) -->
+  <template id="productCardTemplate">
+    <article class="product-card">
+      <div class="product-image">
+        <span class="product-number" data-number></span>
+        <div class="product-placeholder" data-image></div>
+        <span class="league-tag" data-league></span>
+      </div>
+      <div class="product-body">
+        <h3 class="product-name" data-name></h3>
+        <p class="product-price" data-price></p>
+
+        <label class="size-label" for="">
+          Size
+          <select class="size-select" data-size-select>
+            <option value="S">S</option>
+            <option value="M" selected>M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+          </select>
+        </label>
+
+        <button class="add-to-cart-btn" data-add-btn>Add to Cart</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
