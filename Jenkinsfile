@@ -3,8 +3,7 @@ node {
     stage('SCM Checkout') {
         git 'https://github.com/srinathr1442/fifa-cup.git'
     }
-
-    dir('futbolkits-catalog') {
+ {
 
         stage('Maven Build') {
             def mvnHome = tool name: 'Maven-3.9.16', type: 'maven'
