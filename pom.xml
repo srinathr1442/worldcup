@@ -7,24 +7,39 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.2</version>
+    <!-- 3.3.2 is NOT documented as Java 25-ready. Spring's own tracking issue
+         confirms Java 25 support starts at 3.5.5; 3.5.16 is the latest patch
+         on that line, so we pin to that instead of jumping to Boot 4.x. -->
+    <version>3.5.16</version>
     <relativePath/>
   </parent>
 
   <groupId>com.futbolkits</groupId>
   <artifactId>futbolkits-catalog</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <!-- war, not jar: this build now deploys into an external Tomcat 11
+       container (tomcat:11-jdk25) instead of running its own embedded server. -->
+  <packaging>war</packaging>
   <name>futbolkits-catalog</name>
-  <description>FutbolKits jersey catalog backend (Spring Boot REST API)</description>
+  <description>FutbolKits jersey catalog backend (Spring Boot REST API, deployed to external Tomcat 11)</description>
 
   <properties>
-    <java.version>17</java.version>
+    <java.version>25</java.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Excludes the embedded Tomcat from the packaged war: the runtime
+         Tomcat 11 container provides the servlet container instead, so we
+         only need its APIs at compile time, hence "provided" scope. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -35,6 +50,10 @@
   </dependencies>
 
   <build>
+    <!-- Standard "app" name instead of "app-0.0.1-SNAPSHOT" makes the war
+         predictable to COPY in the Dockerfile and to reference in the URL
+         path (Tomcat serves it at /<war-filename-without-extension>). -->
+    <finalName>futbolkits-catalog</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>

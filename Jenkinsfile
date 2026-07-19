@@ -1,47 +1,47 @@
-Github and jenkins integration and deployment 
-node{
- stage ('SCM Checkout') {
-    git 'https://github.com/srinathr1442/fifa-cup.git'
- }
+node {
+
+    stage('SCM Checkout') {
+        git 'https://github.com/srinathr1442/fifa-cup.git'
+    }
+
+    dir('futbolkits-catalog') {
+
+        stage('Maven Build') {
+            def mvnHome = tool name: 'Maven-3.9.16', type: 'maven'
+            sh "${mvnHome}/bin/mvn clean package"
+            sh 'mv target/futbolkits-catalog*.war target/futbolkits-catalog.war'
+        }
+
+        stage('SonarQube Analysis') {
+            def mvn = tool 'Maven-3.9.16'
+            withSonarQubeEnv() {
+                sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=futbolkits-catalog -Dsonar.projectName='Futbolkits Catalog'"
+            }
+        }
+
+        stage('build Docker Image') {
+            sh 'docker build -t srinath1442/futbolkits-catalog .'
+        }
+
+        stage('Docker image push') {
+            withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'dockerhubusername', passwordVariable: 'dockerhubpassword')]) {
+                sh "docker login -u $dockerhubusername -p ${dockerhubpassword}"
+                sh 'docker push /futbolkits-catalog'
+            }
+        }
+    }
+
+    stage('Remove Previous Container') {
+        sh '''
+            docker stop tomcattest || true
+            docker rm -f tomcattest || true
+        '''
+    }
+
+    stage('Docker Deployment') {
+        sh '''
+            docker pull srinath1442/futbolkits-catalog:latest
+            docker run -d --name tomcattest -p 80:8080 srinath1442/futbolkits-catalog:latest
+        '''
+    }
 }
-
-//Maven (For packing and building the project)
-stage ('Maven Build') {
-     def mavenBuild = tool name: 'Maven-3.9.16', type: 'maven'    
-     sh "${mvnHome}/bin/mvn clean package"
-      sh 'mv target/mady-1.0.0*.war target/The-web.war'
- }
-
- //sonar stage
-  stage('SonarQube Analysis') {
-    def mvn = tool 'Default Maven';
-    withSonarQubeEnv() {
-      sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Website -Dsonar.projectName='Website'"
-    }
-  }
-
- //Docker build
-stage ('build Docker Image') {
-    sh 'docker build -t dockerhub:new-imagename .'
- }
-
- //Docker push to dockerhub
- stage ('Docker image push') {
-    withCredentials([string(credentialsId: 'dockerhub',variable: 'dockerhubpassword')]) {
-        sh "docker login -u $dockerhubusername -p ${dockerhubpassword}"
-    }
- sh 'docker push dockerhub:new-imagename'
- }
- 
-
- //Docker deployment and remove previous container
- stage ('docker deployment') {
-    sh 'docker run -d -p 8090:8080 --name tomcattest dockerhub/new-imagename'
- }
-stage ('remove previous container') {
-   try {
-sh 'docker rm -f tomcattest'
-   } catch (error) { 
-
-   }
- }
