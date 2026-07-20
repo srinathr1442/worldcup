@@ -1,64 +1,87 @@
-# FutbolKits — FIFA Jersey Catalog
+# ⚽ FIFA Jersey Store (fifacup) — Full-Stack Pipeline
 
-A full-stack product catalog for FIFA football jerseys.
+An enterprise-grade, fully automated full-stack web application and CI/CD deployment ecosystem engineered on **AWS**. This repository showcases end-to-end engineering: from a modern UI design and robust Java backend to declarative infrastructure automation, strict static code analysis, containerization, and persistent database hosting.
 
-- **Frontend:** Vanilla HTML5 / CSS3 / ES6+ JavaScript (no frameworks)
-- **Backend:** Java, Spring Boot REST controllers (`@RestController`), embedded Tomcat
-- **Communication:** `fetch()` from the browser to JSON endpoints on the Spring Boot app
+---
 
-## Folder structure
+## 🎨 User Interface & Frontend Showcase
 
-```
-futbolkits/
-├── frontend/
-│   ├── index.html      # Page structure: nav, hero, filters, product grid, cart drawer
-│   ├── styles.css       # Design tokens + sporty responsive styling
-│   └── app.js           # Fetch, filter/sort, cart state, checkout POST
-└── backend/
-    ├── pom.xml
-    └── src/main/java/com/futbolkits/catalog/
-        ├── FutbolKitsApplication.java
-        ├── model/
-        │   ├── Product.java
-        │   ├── CartItem.java
-        │   └── CartRequest.java
-        └── controller/
-            ├── ProductController.java   # GET /api/products (league filter, price sort)
-            └── CartController.java      # POST /api/cart (mock checkout)
-```
+The web client provides a clean, responsive application catalog designed to interact directly with backend endpoints.
 
-## Running the backend
+![FIFA Jersey Store UI](images/Screenshot%202026-07-20%20at%2011.10.45%20PM.jpg)
 
-Requires Java 17+ and Maven.
+---
 
-```bash
-cd backend
-mvn spring-boot:run
-```
+## 🛠️ Software & System Architecture
 
-The API starts on `http://localhost:8080`:
+### 🧩 Core Stack Components
+* **Frontend:** Vanilla HTML5 / CSS3 / ES6+ JavaScript
+* **Backend:** Java, Spring Boot (`@RestController`), Embedded Tomcat Server
+* **Build Automation:** Apache Maven 3.9.16
+* **Database Layer:** PostgreSQL (Relational Engine)
+* **CI/CD Orchestration:** Jenkins (Pipeline-as-Code)
+* **Code Governance:** SonarQube Community Platform
+* **Container Layer:** Docker & Docker Hub
+* **Cloud Infrastructure:** AWS (EC2 Instances, CloudShell, Linux Admin)
 
-- `GET  /api/products` — full catalog
-- `GET  /api/products?league=World%20Cup` — filter by league
-- `GET  /api/products?sort=asc|desc` — sort by price
-- `POST /api/cart` — accepts `{ "items": [...], "subtotal": number }`, returns a mock confirmation
+---
 
-CORS is open (`@CrossOrigin(origins = "*")`) on both controllers so the static frontend can call it from a different port during development. Tighten this to a specific origin before deploying.
+## ⚙️ CI/CD Infrastructure Integration
 
-## Running the frontend
+The lifecycle is entirely hands-off, leveraging a strict **Declarative Jenkins Pipeline** that triggers code testing and deployments sequentially.
 
-Any static file server works, e.g.:
+### 1. Unified Jenkins Pipeline Automation
+The automated runner orchestrates SCM pulling, building, vulnerability validation, artifact clean-ups, and deployment stages smoothly.
 
-```bash
-cd frontend
-python3 -m http.server 5500
-```
+![Jenkins Pipeline Stage View](images/Screenshot%202026-07-20%20at%2010.30.08%20PM.png)
 
-Then open `http://localhost:5500`. The frontend expects the backend at `http://localhost:8080/api` (see the `API_BASE` constant at the top of `app.js` — update it if your backend runs elsewhere).
+### 2. Declarative Jenkinsfile Implementation
+Engineered using pipeline code blocks to ensure trackable configurations and clean credential separation.
 
-If the backend isn't running, `app.js` falls back to a small in-memory product list so the UI still renders for local design/UI work.
+![VS Code Jenkinsfile Code](images/Screenshot%202026-07-20%20at%2011.16.00%20PM_2.jpg)
 
-## Notes
+---
 
-- Images are CSS-drawn jersey placeholders (no binary image assets needed) — swap `product-placeholder` for real `<img>` tags and wire up `imageUrl` from `Product` once real product photography is available.
-- Cart state lives in memory in `app.js` for this demo; wire it to `localStorage` or a user session if you need it to persist across page reloads.
+## 🛡️ Code Quality Assurance
+
+Before application staging occurs, the workflow enforces a strict quality gate check through the code validation engine.
+
+### 📊 SonarQube Metrics Validation
+The system reviews bugs, vulnerabilities, and code safety, validating code before staging.
+
+![SonarQube Passed Gate](images/Screenshot%202026-07-20%20at%2010.31.59%20PM.png)
+
+### 🔐 Secure Credentials Vaulting
+To protect environment boundaries, access points to Docker Hub and SonarQube are handled through a secure global credential management store inside the server core.
+
+![Jenkins Secure Credentials Storage](images/Screenshot%202026-07-20%20at%2010.31.14%20PM.png)
+
+---
+
+## 🐳 Live Cloud & Container Deployment
+
+The application runs directly on an **AWS Ubuntu Linux Instance**, serving isolated live microservices.
+
+### 1. Active Container Workloads
+Terminal metrics showing running container tasks (`docker ps -a`) managing live configurations over mapped cloud ports.
+
+![AWS EC2 Terminal Containers running](images/Screenshot%202026-07-20%20at%2010.59.48%20PM_2.png)
+![AWS Docker Images Layer](images/Screenshot%202026-07-20%20at%2010.36.03%20PM_2.png)
+
+### 2. PostgreSQL Relational Schema Data Layer
+The persistent database environment linked to the platform verified via secure PostgreSQL client connections.
+
+![PostgreSQL Datatables Schema Terminal](images/Screenshot%202026-07-20%20at%2010.56.58%20PM_2.png)
+![PostgreSQL List of Relations Map](images/Screenshot%202026-07-20%20at%2010.57.13%20PM_2.png)
+
+### 3. Source Repository Layout
+The clean folder structure tracking configuration dependencies, build manifests (`pom.xml`), and environment setup modules.
+
+![GitHub Source Code Structure Layout](images/Screenshot%202026-07-20%20at%2010.31.36%20PM.png)
+
+---
+
+## 💡 Key Engineering Takeaways
+* **Pipeline Resilience:** Built logic blocks that handle container clean-ups (`Remove Previous Container`) ensuring deployments don't crash due to port conflicts.
+* **Database Isolation:** Kept the database structures accessible through container networks while ensuring relational constraints are safely applied.
+* **Secrets Control:** Implemented strict code hygiene by passing variables via hidden system handles instead of clear-text exposure.
