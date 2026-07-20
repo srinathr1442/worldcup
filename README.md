@@ -38,7 +38,7 @@ The automated runner orchestrates SCM pulling, building, vulnerability validatio
 ### 2. Declarative Jenkinsfile Implementation
 Engineered using pipeline code blocks to ensure trackable configurations and clean credential separation.
 
-![VS Code Jenkinsfile Code](images/Screenshot%202026-07-20%20at%2011.16.00%20PM_2.jpg)
+![VS Code Jenkinsfile Code](images/jenkins-credential.png)
 
 ---
 
