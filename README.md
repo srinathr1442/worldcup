@@ -33,7 +33,7 @@ The lifecycle is entirely hands-off, leveraging a strict **Declarative Jenkins P
 ### 1. Unified Jenkins Pipeline Automation
 The automated runner orchestrates SCM pulling, building, vulnerability validation, artifact clean-ups, and deployment stages smoothly.
 
-![Jenkins Pipeline Stage View](images/Screenshot%202026-07-20%20at%2010.30.08%20PM.png)
+![Jenkins Pipeline Stage View](images/jenkins pipeline.png)
 
 ### 2. Declarative Jenkinsfile Implementation
 Engineered using pipeline code blocks to ensure trackable configurations and clean credential separation.
