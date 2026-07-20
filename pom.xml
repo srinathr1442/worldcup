@@ -19,7 +19,8 @@
   <description>FutbolKits jersey catalog backend (Spring Boot REST API, deployed to external Tomcat 11)</description>
 
   <properties>
-    <java.version>25</java.version>
+    <!-- Changed from 25 to 17 for Jenkins build environment compatibility -->
+    <java.version>17</java.version>
   </properties>
 
   <dependencies>
