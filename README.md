@@ -8,7 +8,7 @@ An enterprise-grade, fully automated full-stack web application and CI/CD deploy
 
 The web client provides a clean, responsive application catalog designed to interact directly with backend endpoints.
 
-![FIFA Jersey Store UI](images/Screenshot%202026-07-20%20at%2011.10.45%20PM.jpg)
+![FIFA Jersey Store UI](images/user-interface.png)
 
 ---
 
@@ -49,12 +49,12 @@ Before application staging occurs, the workflow enforces a strict quality gate c
 ### 📊 SonarQube Metrics Validation
 The system reviews bugs, vulnerabilities, and code safety, validating code before staging.
 
-![SonarQube Passed Gate](images/Screenshot%202026-07-20%20at%2010.31.59%20PM.png)
+![SonarQube Passed Gate](images/sonarqube-gate.png)
 
 ### 🔐 Secure Credentials Vaulting
 To protect environment boundaries, access points to Docker Hub and SonarQube are handled through a secure global credential management store inside the server core.
 
-![Jenkins Secure Credentials Storage](images/Screenshot%202026-07-20%20at%2010.31.14%20PM.png)
+![Jenkins Secure Credentials Storage](images/jenkins-credential.png)
 
 ---
 
@@ -65,19 +65,19 @@ The application runs directly on an **AWS Ubuntu Linux Instance**, serving isola
 ### 1. Active Container Workloads
 Terminal metrics showing running container tasks (`docker ps -a`) managing live configurations over mapped cloud ports.
 
-![AWS EC2 Terminal Containers running](images/Screenshot%202026-07-20%20at%2010.59.48%20PM_2.png)
-![AWS Docker Images Layer](images/Screenshot%202026-07-20%20at%2010.36.03%20PM_2.png)
+![AWS EC2 Terminal Containers running](images/docker-container.png)
+![AWS Docker Images Layer](images/docker-image.png)
 
 ### 2. PostgreSQL Relational Schema Data Layer
 The persistent database environment linked to the platform verified via secure PostgreSQL client connections.
 
-![PostgreSQL Datatables Schema Terminal](images/Screenshot%202026-07-20%20at%2010.56.58%20PM_2.png)
-![PostgreSQL List of Relations Map](images/Screenshot%202026-07-20%20at%2010.57.13%20PM_2.png)
+![PostgreSQL Datatables Schema Terminal](images/data-table.png)
+![PostgreSQL List of Relations Map](images/postgresql-list.png)
 
 ### 3. Source Repository Layout
 The clean folder structure tracking configuration dependencies, build manifests (`pom.xml`), and environment setup modules.
 
-![GitHub Source Code Structure Layout](images/Screenshot%202026-07-20%20at%2010.31.36%20PM.png)
+![GitHub Source Code Structure Layout](images/github-source.png)
 
 ---
 
