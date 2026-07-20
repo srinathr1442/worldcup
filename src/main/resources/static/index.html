@@ -1,167 +1,913 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FutbolKits — Official Match Jerseys</title>
-
-  <!-- Display face: condensed, bold, built for shirt numbers & team names -->
-  <!-- Body face: clean grotesk for readability -->
-  <!-- Utility face: mono, used for prices & SKU-style meta data -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIFA Jersey Store | Premium Football Jerseys</title>
+  <meta name="description" content="Shop premium football jerseys inspired by the world's greatest players. Home, away, third, retro and limited edition kits with worldwide shipping.">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- ============ TOP NAV ============ -->
-  <header class="site-nav">
-    <div class="nav-inner">
-      <a class="logo" href="#" aria-label="FutbolKits home">
-        <span class="logo-mark">FK</span>
-        <span class="logo-word">Futbol<em>Kits</em></span>
+  <!-- =============================== -->
+  <!-- NAVBAR -->
+  <!-- =============================== -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar-container">
+
+      <!-- FIX: Changed href="/" to href="#" so it references the page relative to your Tomcat deployment -->
+      <a href="#" class="logo" id="logo" aria-label="FIFA Jersey Store home">
+        <span class="logo-text">FIFA<span class="logo-accent">Jersey</span>Store</span>
       </a>
 
-      <div class="nav-search">
-        <input
-          id="searchInput"
-          type="search"
-          placeholder="Search team, country or league…"
-          aria-label="Search jerseys"
-        />
-        <svg viewBox="0 0 24 24" class="icon-search" aria-hidden="true">
-          <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+      <nav class="nav-links" id="navLinks" aria-label="Primary navigation">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#hero" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="#featured-players" class="nav-link">Jerseys</a></li>
+          <li class="nav-item"><a href="#featured-collections" class="nav-link">Collections</a></li>
+          <li class="nav-item"><a href="#best-sellers" class="nav-link">Best Sellers</a></li>
+          <li class="nav-item"><a href="#featured-players" class="nav-link">Players</a></li>
+          <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="#newsletter" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="navbar-actions">
+        <button type="button" class="icon-btn search-btn" id="searchBtn" aria-label="Search">
+          <span class="icon icon-search" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="icon-btn wishlist-btn" id="wishlistBtn" aria-label="View wishlist">
+          <span class="icon icon-wishlist" aria-hidden="true"></span>
+          <span class="badge-count" id="wishlistCount">0</span>
+        </button>
+        <button type="button" class="icon-btn cart-btn" id="cartBtn" aria-label="View shopping cart">
+          <span class="icon icon-cart" aria-hidden="true"></span>
+          <span class="badge-count" id="cartCount">0</span>
+        </button>
+        <button type="button" class="icon-btn profile-btn" id="profileBtn" aria-label="User profile">
+          <span class="icon icon-profile" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
       </div>
 
-      <button class="cart-trigger" id="cartTrigger" aria-label="Open shopping cart">
-        <svg viewBox="0 0 24 24" class="icon-cart" aria-hidden="true">
-          <path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
-            d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6" />
-          <circle cx="9" cy="21" r="1.4" fill="currentColor"/>
-          <circle cx="18" cy="21" r="1.4" fill="currentColor"/>
-        </svg>
-        <span class="cart-badge" id="cartBadge">0</span>
-      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation" hidden>
+      <ul class="mobile-nav-list">
+        <li><a href="#hero" class="mobile-nav-link">Home</a></li>
+        <li><a href="#featured-players" class="mobile-nav-link">Jerseys</a></li>
+        <li><a href="#featured-collections" class="mobile-nav-link">Collections</a></li>
+        <li><a href="#best-sellers" class="mobile-nav-link">Best Sellers</a></li>
+        <li><a href="#featured-players" class="mobile-nav-link">Players</a></li>
+        <li><a href="#about" class="mobile-nav-link">About</a></li>
+        <li><a href="#newsletter" class="mobile-nav-link">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="searchOverlay" hidden>
+      <form class="search-bar" id="searchForm" role="search">
+        <label for="searchInput" class="visually-hidden">Search jerseys</label>
+        <input type="search" id="searchInput" name="search" class="search-input" placeholder="Search for jerseys, players, clubs...">
+        <button type="submit" class="btn btn-primary search-submit">Search</button>
+        <button type="button" class="icon-btn search-close" id="searchClose" aria-label="Close search">✕</button>
+      </form>
     </div>
   </header>
 
-  <!-- ============ HERO / KICKOFF STRIP ============ -->
-  <section class="kickoff-strip">
-    <div class="kickoff-inner">
-      <p class="kickoff-eyebrow">2026 CYCLE — OFFICIAL REPLICAS</p>
-      <h1 class="kickoff-title">Wear the badge.<br/>Own the match.</h1>
-      <p class="kickoff-sub">Authentic national team kits, sourced for supporters who don't just watch the tournament — they suit up for it.</p>
-    </div>
-  </section>
+  <main id="main-content">
 
-  <!-- ============ MAIN CATALOG LAYOUT ============ -->
-  <main class="catalog-layout">
+    <!-- =============================== -->
+    <!-- HERO SECTION -->
+    <!-- =============================== -->
+    <section class="hero" id="hero">
+      <div class="hero-background">
+        <img src="" alt="" class="hero-bg-image" id="heroBgImage" aria-hidden="true">
+        <div class="hero-overlay"></div>
+      </div>
 
-    <!-- Filter sidebar -->
-    <aside class="filters" aria-label="Filter jerseys">
-      <div class="filters-block">
-        <h2 class="filters-title">League</h2>
-        <div class="filter-group" id="leagueFilters">
-          <label class="filter-pill">
-            <input type="radio" name="league" value="all" checked />
-            <span>All Competitions</span>
-          </label>
-          <label class="filter-pill">
-            <input type="radio" name="league" value="World Cup" />
-            <span>World Cup</span>
-          </label>
-          <label class="filter-pill">
-            <input type="radio" name="league" value="Premier League" />
-            <span>Premier League</span>
-          </label>
-          <label class="filter-pill">
-            <input type="radio" name="league" value="La Liga" />
-            <span>La Liga</span>
-          </label>
-          <label class="filter-pill">
-            <input type="radio" name="league" value="Serie A" />
-            <span>Serie A</span>
-          </label>
+      <div class="hero-decorative" id="heroDecorative" aria-hidden="true">
+        <span class="decorative-shape decorative-shape-1"></span>
+        <span class="decorative-shape decorative-shape-2"></span>
+        <span class="decorative-shape decorative-shape-3"></span>
+      </div>
+
+      <div class="container hero-container">
+        <div class="hero-content">
+          <p class="hero-eyebrow">Season 2025/26 Collection</p>
+          <h1 class="hero-heading">Wear Greatness.</h1>
+          <p class="hero-subheading">Discover premium football jerseys inspired by the world's greatest players.</p>
+
+          <div class="hero-actions">
+            <a href="#featured-players" class="btn btn-primary" id="shopJerseysBtn">Shop Jerseys</a>
+            <a href="#featured-collections" class="btn btn-secondary" id="exploreCollectionBtn">Explore Collection</a>
+          </div>
+        </div>
+
+        <div class="hero-image-wrapper">
+          <img src="" alt="Featured football jersey" class="hero-image" id="heroImage">
         </div>
       </div>
 
-      <div class="filters-block">
-        <h2 class="filters-title">Sort by price</h2>
-        <select id="sortSelect" class="sort-select">
-          <option value="none">Featured</option>
-          <option value="asc">Price: Low to High</option>
-          <option value="desc">Price: High to Low</option>
-        </select>
-      </div>
-
-      <div class="filters-block filters-note">
-        <p><strong id="resultCount">0</strong> kits match your filters.</p>
-      </div>
-    </aside>
-
-    <!-- Product grid -->
-    <section class="product-section">
-      <div id="productGrid" class="product-grid" aria-live="polite">
-        <!-- Product cards are injected here by app.js -->
-      </div>
-      <p id="emptyState" class="empty-state" hidden>
-        No jerseys match that search. Try a different team or clear your filters.
-      </p>
+      <a href="#featured-players" class="scroll-indicator" id="scrollIndicator" aria-label="Scroll to jerseys">
+        <span class="scroll-indicator-icon" aria-hidden="true"></span>
+      </a>
     </section>
+
+    <!-- =============================== -->
+    <!-- FEATURED PLAYERS -->
+    <!-- =============================== -->
+    <section class="featured-players" id="featured-players">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Player Editions</p>
+          <h2 class="section-title">Featured Players</h2>
+          <p class="section-subtitle">Official-inspired kits worn by football's biggest icons.</p>
+        </div>
+
+        <div class="product-grid" id="playersGrid">
+
+          <!-- Cristiano Ronaldo -->
+          <article class="product-card" data-player="cristiano-ronaldo">
+            <div class="product-card-media">
+              <img src="" alt="Cristiano Ronaldo jersey" class="product-image" loading="lazy">
+              <span class="badge discount-badge">-20%</span>
+              <div class="product-card-actions">
+                <button type="button" class="icon-btn wishlist-btn" aria-label="Add Cristiano Ronaldo jersey to wishlist">
+                  <span class="icon icon-wishlist" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-player-name">Cristiano Ronaldo</h3>
+              <p class="product-club">Al Nassr FC</p>
+              <p class="product-country">Portugal</p>
+              <p class="product-season">2025/26 Season</p>
+              <p class="product-jersey-name">Home Jersey</p>
+              <div class="product-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$89.99</span>
+                <span class="price price-old">$112.99</span>
+              </div>
+              <div class="product-sizes" aria-label="Available sizes">
+                <span class="size-option">S</span>
+                <span class="size-option">M</span>
+                <span class="size-option">L</span>
+                <span class="size-option">XL</span>
+              </div>
+              <p class="stock-status in-stock">In Stock</p>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add To Cart</button>
+            </div>
+          </article>
+
+          <!-- Lionel Messi -->
+          <article class="product-card" data-player="lionel-messi">
+            <div class="product-card-media">
+              <img src="" alt="Lionel Messi jersey" class="product-image" loading="lazy">
+              <span class="badge discount-badge">-15%</span>
+              <div class="product-card-actions">
+                <button type="button" class="icon-btn wishlist-btn" aria-label="Add Lionel Messi jersey to wishlist">
+                  <span class="icon icon-wishlist" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-player-name">Lionel Messi</h3>
+              <p class="product-club">Inter Miami CF</p>
+              <p class="product-country">Argentina</p>
+              <p class="product-season">2025/26 Season</p>
+              <p class="product-jersey-name">Home Jersey</p>
+              <div class="product-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$94.99</span>
+                <span class="price price-old">$111.99</span>
+              </div>
+              <div class="product-sizes" aria-label="Available sizes">
+                <span class="size-option">S</span>
+                <span class="size-option">M</span>
+                <span class="size-option">L</span>
+                <span class="size-option">XL</span>
+              </div>
+              <p class="stock-status in-stock">In Stock</p>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add To Cart</button>
+            </div>
+          </article>
+
+          <!-- Lamine Yamal -->
+          <article class="product-card" data-player="lamine-yamal">
+            <div class="product-card-media">
+              <img src="" alt="Lamine Yamal jersey" class="product-image" loading="lazy">
+              <span class="badge discount-badge">-10%</span>
+              <div class="product-card-actions">
+                <button type="button" class="icon-btn wishlist-btn" aria-label="Add Lamine Yamal jersey to wishlist">
+                  <span class="icon icon-wishlist" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-player-name">Lamine Yamal</h3>
+              <p class="product-club">FC Barcelona</p>
+              <p class="product-country">Spain</p>
+              <p class="product-season">2025/26 Season</p>
+              <p class="product-jersey-name">Home Jersey</p>
+              <div class="product-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$84.99</span>
+                <span class="price price-old">$94.99</span>
+              </div>
+              <div class="product-sizes" aria-label="Available sizes">
+                <span class="size-option">S</span>
+                <span class="size-option">M</span>
+                <span class="size-option">L</span>
+                <span class="size-option">XL</span>
+              </div>
+              <p class="stock-status in-stock">In Stock</p>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add To Cart</button>
+            </div>
+          </article>
+
+          <!-- Neymar Jr -->
+          <article class="product-card" data-player="neymar-jr">
+            <div class="product-card-media">
+              <img src="" alt="Neymar Jr jersey" class="product-image" loading="lazy">
+              <span class="badge discount-badge">-18%</span>
+              <div class="product-card-actions">
+                <button type="button" class="icon-btn wishlist-btn" aria-label="Add Neymar Jr jersey to wishlist">
+                  <span class="icon icon-wishlist" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-player-name">Neymar Jr</h3>
+              <p class="product-club">Santos FC</p>
+              <p class="product-country">Brazil</p>
+              <p class="product-season">2025/26 Season</p>
+              <p class="product-jersey-name">Home Jersey</p>
+              <div class="product-rating" aria-label="Rated 4.5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$82.99</span>
+                <span class="price price-old">$101.99</span>
+              </div>
+              <div class="product-sizes" aria-label="Available sizes">
+                <span class="size-option">S</span>
+                <span class="size-option">M</span>
+                <span class="size-option">L</span>
+                <span class="size-option">XL</span>
+              </div>
+              <p class="stock-status in-stock">In Stock</p>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add To Cart</button>
+            </div>
+          </article>
+
+          <!-- Kylian Mbappé -->
+          <article class="product-card" data-player="kylian-mbappe">
+            <div class="product-card-media">
+              <img src="" alt="Kylian Mbappé jersey" class="product-image" loading="lazy">
+              <span class="badge discount-badge">-12%</span>
+              <div class="product-card-actions">
+                <button type="button" class="icon-btn wishlist-btn" aria-label="Add Kylian Mbappé jersey to wishlist">
+                  <span class="icon icon-wishlist" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-player-name">Kylian Mbappé</h3>
+              <p class="product-club">Real Madrid CF</p>
+              <p class="product-country">France</p>
+              <p class="product-season">2025/26 Season</p>
+              <p class="product-jersey-name">Home Jersey</p>
+              <div class="product-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$91.99</span>
+                <span class="price price-old">$104.99</span>
+              </div>
+              <div class="product-sizes" aria-label="Available sizes">
+                <span class="size-option">S</span>
+                <span class="size-option">M</span>
+                <span class="size-option">L</span>
+                <span class="size-option">XL</span>
+              </div>
+              <p class="stock-status in-stock">In Stock</p>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add To Cart</button>
+            </div>
+          </article>
+
+          <!-- Jude Bellingham -->
+          <article class="product-card" data-player="jude-bellingham">
+            <div class="product-card-media">
+              <img src="" alt="Jude Bellingham jersey" class="product-image" loading="lazy">
+              <span class="badge discount-badge">-15%</span>
+              <div class="product-card-actions">
+                <button type="button" class="icon-btn wishlist-btn" aria-label="Add Jude Bellingham jersey to wishlist">
+                  <span class="icon icon-wishlist" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-player-name">Jude Bellingham</h3>
+              <p class="product-club">Real Madrid CF</p>
+              <p class="product-country">England</p>
+              <p class="product-season">2025/26 Season</p>
+              <p class="product-jersey-name">Home Jersey</p>
+              <div class="product-rating" aria-label="Rated 4.5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$88.99</span>
+                <span class="price price-old">$104.99</span>
+              </div>
+              <div class="product-sizes" aria-label="Available sizes">
+                <span class="size-option">S</span>
+                <span class="size-option">M</span>
+                <span class="size-option">L</span>
+                <span class="size-option">XL</span>
+              </div>
+              <p class="stock-status in-stock">In Stock</p>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add To Cart</button>
+            </div>
+          </article>
+
+          <!-- Erling Haaland -->
+          <article class="product-card" data-player="erling-haaland">
+            <div class="product-card-media">
+              <img src="" alt="Erling Haaland jersey" class="product-image" loading="lazy">
+              <span class="badge discount-badge">-10%</span>
+              <div class="product-card-actions">
+                <button type="button" class="icon-btn wishlist-btn" aria-label="Add Erling Haaland jersey to wishlist">
+                  <span class="icon icon-wishlist" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-player-name">Erling Haaland</h3>
+              <p class="product-club">Manchester City</p>
+              <p class="product-country">Norway</p>
+              <p class="product-season">2025/26 Season</p>
+              <p class="product-jersey-name">Home Jersey</p>
+              <div class="product-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$86.99</span>
+                <span class="price price-old">$96.99</span>
+              </div>
+              <div class="product-sizes" aria-label="Available sizes">
+                <span class="size-option">S</span>
+                <span class="size-option">M</span>
+                <span class="size-option">L</span>
+                <span class="size-option">XL</span>
+              </div>
+              <p class="stock-status low-stock">Low Stock</p>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add To Cart</button>
+            </div>
+          </article>
+
+          <!-- Vinicius Jr -->
+          <article class="product-card" data-player="vinicius-jr">
+            <div class="product-card-media">
+              <img src="" alt="Vinicius Jr jersey" class="product-image" loading="lazy">
+              <span class="badge discount-badge">-14%</span>
+              <div class="product-card-actions">
+                <button type="button" class="icon-btn wishlist-btn" aria-label="Add Vinicius Jr jersey to wishlist">
+                  <span class="icon icon-wishlist" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary quick-view-btn">Quick View</button>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-player-name">Vinicius Jr</h3>
+              <p class="product-club">Real Madrid CF</p>
+              <p class="product-country">Brazil</p>
+              <p class="product-season">2025/26 Season</p>
+              <p class="product-jersey-name">Home Jersey</p>
+              <div class="product-rating" aria-label="Rated 4.5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$87.99</span>
+                <span class="price price-old">$102.99</span>
+              </div>
+              <div class="product-sizes" aria-label="Available sizes">
+                <span class="size-option">S</span>
+                <span class="size-option">M</span>
+                <span class="size-option">L</span>
+                <span class="size-option">XL</span>
+              </div>
+              <p class="stock-status in-stock">In Stock</p>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add To Cart</button>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- FEATURED COLLECTIONS -->
+    <!-- =============================== -->
+    <section class="featured-collections" id="featured-collections">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Shop By Category</p>
+          <h2 class="section-title">Featured Collections</h2>
+          <p class="section-subtitle">Curated kit collections for every kind of fan.</p>
+        </div>
+
+        <div class="collection-grid" id="collectionsGrid">
+
+          <article class="collection-card" data-collection="home-kits">
+            <div class="collection-card-media">
+              <img src="" alt="Home kits collection" class="collection-image" loading="lazy">
+            </div>
+            <div class="collection-card-body">
+              <h3 class="collection-name">Home Kits</h3>
+              <p class="collection-description">Classic club colors for match day pride.</p>
+              <a href="#" class="btn btn-secondary explore-btn">Explore</a>
+            </div>
+          </article>
+
+          <article class="collection-card" data-collection="away-kits">
+            <div class="collection-card-media">
+              <img src="" alt="Away kits collection" class="collection-image" loading="lazy">
+            </div>
+            <div class="collection-card-body">
+              <h3 class="collection-name">Away Kits</h3>
+              <p class="collection-description">Bold designs for the road ahead.</p>
+              <a href="#" class="btn btn-secondary explore-btn">Explore</a>
+            </div>
+          </article>
+
+          <article class="collection-card" data-collection="third-kits">
+            <div class="collection-card-media">
+              <img src="" alt="Third kits collection" class="collection-image" loading="lazy">
+            </div>
+            <div class="collection-card-body">
+              <h3 class="collection-name">Third Kits</h3>
+              <p class="collection-description">Statement styles beyond the usual palette.</p>
+              <a href="#" class="btn btn-secondary explore-btn">Explore</a>
+            </div>
+          </article>
+
+          <article class="collection-card" data-collection="retro-jerseys">
+            <div class="collection-card-media">
+              <img src="" alt="Retro jerseys collection" class="collection-image" loading="lazy">
+            </div>
+            <div class="collection-card-body">
+              <h3 class="collection-name">Retro Jerseys</h3>
+              <p class="collection-description">Vintage kits that shaped football history.</p>
+              <a href="#" class="btn btn-secondary explore-btn">Explore</a>
+            </div>
+          </article>
+
+          <article class="collection-card" data-collection="limited-edition">
+            <div class="collection-card-media">
+              <img src="" alt="Limited edition jerseys collection" class="collection-image" loading="lazy">
+            </div>
+            <div class="collection-card-body">
+              <h3 class="collection-name">Limited Edition</h3>
+              <p class="collection-description">Rare drops, produced in small runs.</p>
+              <a href="#" class="btn btn-secondary explore-btn">Explore</a>
+            </div>
+          </article>
+
+          <article class="collection-card" data-collection="national-team">
+            <div class="collection-card-media">
+              <img src="" alt="National team jerseys collection" class="collection-image" loading="lazy">
+            </div>
+            <div class="collection-card-body">
+              <h3 class="collection-name">National Team Jerseys</h3>
+              <p class="collection-description">Represent your country on the world stage.</p>
+              <a href="#" class="btn btn-secondary explore-btn">Explore</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- BEST SELLERS -->
+    <!-- =============================== -->
+    <section class="best-sellers" id="best-sellers">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Fan Favorites</p>
+          <h2 class="section-title">Best Sellers</h2>
+          <p class="section-subtitle">The jerseys everyone's adding to cart this season.</p>
+        </div>
+
+        <div class="best-sellers-showcase" id="bestSellersShowcase">
+
+          <article class="best-seller-card">
+            <div class="best-seller-card-media">
+              <img src="" alt="Real Madrid home jersey" class="product-image" loading="lazy">
+              <span class="badge best-seller-badge">Best Seller</span>
+              <span class="badge discount-badge">-15%</span>
+            </div>
+            <div class="best-seller-card-body">
+              <h3 class="best-seller-name">Real Madrid Home Jersey</h3>
+              <div class="product-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$89.99</span>
+                <span class="price price-old">$105.99</span>
+              </div>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+            </div>
+          </article>
+
+          <article class="best-seller-card">
+            <div class="best-seller-card-media">
+              <img src="" alt="Barcelona home jersey" class="product-image" loading="lazy">
+              <span class="badge best-seller-badge">Best Seller</span>
+              <span class="badge discount-badge">-10%</span>
+            </div>
+            <div class="best-seller-card-body">
+              <h3 class="best-seller-name">Barcelona Home Jersey</h3>
+              <div class="product-rating" aria-label="Rated 4.5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$84.99</span>
+                <span class="price price-old">$94.99</span>
+              </div>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+            </div>
+          </article>
+
+          <article class="best-seller-card">
+            <div class="best-seller-card-media">
+              <img src="" alt="Manchester City home jersey" class="product-image" loading="lazy">
+              <span class="badge best-seller-badge">Best Seller</span>
+              <span class="badge discount-badge">-12%</span>
+            </div>
+            <div class="best-seller-card-body">
+              <h3 class="best-seller-name">Manchester City Home Jersey</h3>
+              <div class="product-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$86.99</span>
+                <span class="price price-old">$98.99</span>
+              </div>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+            </div>
+          </article>
+
+          <article class="best-seller-card">
+            <div class="best-seller-card-media">
+              <img src="" alt="PSG home jersey" class="product-image" loading="lazy">
+              <span class="badge best-seller-badge">Best Seller</span>
+              <span class="badge discount-badge">-8%</span>
+            </div>
+            <div class="best-seller-card-body">
+              <h3 class="best-seller-name">PSG Home Jersey</h3>
+              <div class="product-rating" aria-label="Rated 4.5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$91.99</span>
+                <span class="price price-old">$99.99</span>
+              </div>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+            </div>
+          </article>
+
+          <article class="best-seller-card">
+            <div class="best-seller-card-media">
+              <img src="" alt="Liverpool home jersey" class="product-image" loading="lazy">
+              <span class="badge best-seller-badge">Best Seller</span>
+              <span class="badge discount-badge">-10%</span>
+            </div>
+            <div class="best-seller-card-body">
+              <h3 class="best-seller-name">Liverpool Home Jersey</h3>
+              <div class="product-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+              <div class="product-price">
+                <span class="price price-current">$85.99</span>
+                <span class="price price-old">$95.99</span>
+              </div>
+              <button type="button" class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- WHY CHOOSE US -->
+    <!-- =============================== -->
+    <section class="why-choose-us" id="about">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">The Difference</p>
+          <h2 class="section-title">Why Choose Us</h2>
+        </div>
+
+        <div class="feature-grid" id="featuresGrid">
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"></div>
+            <h3 class="feature-title">Premium Quality</h3>
+            <p class="feature-description">Crafted from high-performance fabrics built to last.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"></div>
+            <h3 class="feature-title">Official Inspired Designs</h3>
+            <p class="feature-description">Detailed designs that echo the authentic kits fans love.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"></div>
+            <h3 class="feature-title">Worldwide Shipping</h3>
+            <p class="feature-description">We deliver to football fans in every corner of the globe.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"></div>
+            <h3 class="feature-title">Fast Delivery</h3>
+            <p class="feature-description">Quick dispatch so your jersey arrives before kickoff.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"></div>
+            <h3 class="feature-title">Secure Payments</h3>
+            <p class="feature-description">Your transactions are protected at every step.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"></div>
+            <h3 class="feature-title">Easy Returns</h3>
+            <p class="feature-description">Hassle-free returns within 30 days of purchase.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- POPULAR CLUBS -->
+    <!-- =============================== -->
+    <section class="popular-clubs" id="popular-clubs">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Shop By Club</p>
+          <h2 class="section-title">Popular Clubs</h2>
+        </div>
+
+        <div class="club-grid" id="clubsGrid">
+          <a href="#" class="club-card" data-club="real-madrid">
+            <img src="" alt="Real Madrid logo" class="club-logo" loading="lazy">
+            <span class="club-name">Real Madrid</span>
+          </a>
+          <a href="#" class="club-card" data-club="barcelona">
+            <img src="" alt="Barcelona logo" class="club-logo" loading="lazy">
+            <span class="club-name">Barcelona</span>
+          </a>
+          <a href="#" class="club-card" data-club="manchester-united">
+            <img src="" alt="Manchester United logo" class="club-logo" loading="lazy">
+            <span class="club-name">Manchester United</span>
+          </a>
+          <a href="#" class="club-card" data-club="manchester-city">
+            <img src="" alt="Manchester City logo" class="club-logo" loading="lazy">
+            <span class="club-name">Manchester City</span>
+          </a>
+          <a href="#" class="club-card" data-club="liverpool">
+            <img src="" alt="Liverpool logo" class="club-logo" loading="lazy">
+            <span class="club-name">Liverpool</span>
+          </a>
+          <a href="#" class="club-card" data-club="arsenal">
+            <img src="" alt="Arsenal logo" class="club-logo" loading="lazy">
+            <span class="club-name">Arsenal</span>
+          </a>
+          <a href="#" class="club-card" data-club="psg">
+            <img src="" alt="PSG logo" class="club-logo" loading="lazy">
+            <span class="club-name">PSG</span>
+          </a>
+          <a href="#" class="club-card" data-club="al-nassr">
+            <img src="" alt="Al Nassr logo" class="club-logo" loading="lazy">
+            <span class="club-name">Al Nassr</span>
+          </a>
+          <a href="#" class="club-card" data-club="inter-miami">
+            <img src="" alt="Inter Miami logo" class="club-logo" loading="lazy">
+            <span class="club-name">Inter Miami</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- CUSTOMER REVIEWS -->
+    <!-- =============================== -->
+    <section class="customer-reviews" id="customer-reviews">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Testimonials</p>
+          <h2 class="section-title">What Our Customers Say</h2>
+        </div>
+
+        <div class="testimonial-grid" id="testimonialsGrid">
+
+          <article class="testimonial-card">
+            <img src="" alt="Photo of customer Daniel K." class="testimonial-photo" loading="lazy">
+            <h3 class="testimonial-name">Daniel K.</h3>
+            <p class="testimonial-country">Germany</p>
+            <div class="testimonial-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+            <p class="testimonial-review">The fit and finish are outstanding, and delivery was faster than I expected.</p>
+          </article>
+
+          <article class="testimonial-card">
+            <img src="" alt="Photo of customer Aisha M." class="testimonial-photo" loading="lazy">
+            <h3 class="testimonial-name">Aisha M.</h3>
+            <p class="testimonial-country">United Arab Emirates</p>
+            <div class="testimonial-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+            <p class="testimonial-review">Fabric quality feels premium and the sizing guide was spot on.</p>
+          </article>
+
+          <article class="testimonial-card">
+            <img src="" alt="Photo of customer Lucas P." class="testimonial-photo" loading="lazy">
+            <h3 class="testimonial-name">Lucas P.</h3>
+            <p class="testimonial-country">Brazil</p>
+            <div class="testimonial-rating" aria-label="Rated 4.5 out of 5 stars">★★★★★</div>
+            <p class="testimonial-review">Great packaging and the jersey looks even better in person.</p>
+          </article>
+
+          <article class="testimonial-card">
+            <img src="" alt="Photo of customer Emma S." class="testimonial-photo" loading="lazy">
+            <h3 class="testimonial-name">Emma S.</h3>
+            <p class="testimonial-country">United Kingdom</p>
+            <div class="testimonial-rating" aria-label="Rated 5 out of 5 stars">★★★★★</div>
+            <p class="testimonial-review">Customer support helped me pick the right size within minutes.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- FAQ -->
+    <!-- =============================== -->
+    <section class="faq" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Support</p>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+        </div>
+
+        <div class="accordion" id="faqAccordion">
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button type="button" class="accordion-trigger" id="faqShippingTrigger" aria-expanded="false" aria-controls="faqShippingPanel">
+                Shipping
+                <span class="accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion-panel" id="faqShippingPanel" role="region" aria-labelledby="faqShippingTrigger" hidden>
+              <p>We ship to most countries worldwide, with tracking provided on every order.</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button type="button" class="accordion-trigger" id="faqReturnsTrigger" aria-expanded="false" aria-controls="faqReturnsPanel">
+                Returns
+                <span class="accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion-panel" id="faqReturnsPanel" role="region" aria-labelledby="faqReturnsTrigger" hidden>
+              <p>Unworn items with tags attached can be returned within 30 days for a full refund.</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button type="button" class="accordion-trigger" id="faqPaymentTrigger" aria-expanded="false" aria-controls="faqPaymentPanel">
+                Payment
+                <span class="accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion-panel" id="faqPaymentPanel" role="region" aria-labelledby="faqPaymentTrigger" hidden>
+              <p>We accept all major credit cards, PayPal, and other secure payment methods.</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button type="button" class="accordion-trigger" id="faqSizesTrigger" aria-expanded="false" aria-controls="faqSizesPanel">
+                Jersey Sizes
+                <span class="accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion-panel" id="faqSizesPanel" role="region" aria-labelledby="faqSizesTrigger" hidden>
+              <p>Check our size guide before ordering, as fits can vary slightly between styles.</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button type="button" class="accordion-trigger" id="faqDeliveryTrigger" aria-expanded="false" aria-controls="faqDeliveryPanel">
+                Delivery Time
+                <span class="accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion-panel" id="faqDeliveryPanel" role="region" aria-labelledby="faqDeliveryTrigger" hidden>
+              <p>Standard delivery typically takes 5 to 10 business days depending on location.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- NEWSLETTER -->
+    <!-- =============================== -->
+    <section class="newsletter" id="newsletter">
+      <div class="container newsletter-container">
+        <h2 class="newsletter-heading">Join The Squad</h2>
+        <p class="newsletter-description">Sign up for early access to drops, restocks, and exclusive offers.</p>
+
+        <form class="newsletter-form" id="newsletterForm">
+          <label for="newsletterEmail" class="visually-hidden">Email address</label>
+          <input type="email" id="newsletterEmail" name="email" class="newsletter-input" placeholder="Enter your email address" required>
+          <button type="submit" class="btn btn-primary newsletter-submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
   </main>
 
-  <!-- ============ CART DRAWER (slide-out) ============ -->
-  <div class="cart-overlay" id="cartOverlay"></div>
-  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
-    <div class="cart-header">
-      <h2>Your Kit Bag</h2>
-      <button class="cart-close" id="cartClose" aria-label="Close cart">✕</button>
+  <!-- =============================== -->
+  <!-- FOOTER -->
+  <!-- =============================== -->
+  <footer class="footer" id="footer">
+    <div class="container footer-container">
+
+      <div class="footer-column footer-about">
+        <!-- FIX: Changed href="/" to href="#" -->
+        <a href="#" class="logo footer-logo" aria-label="FIFA Jersey Store home">
+          <span class="logo-text">FIFA<span class="logo-accent">Jersey</span>Store</span>
+        </a>
+        <p class="footer-about-text">Premium football jerseys inspired by the world's greatest players, clubs, and nations.</p>
+      </div>
+
+      <div class="footer-column footer-links">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-list">
+          <li><a href="#hero" class="footer-link">Home</a></li>
+          <li><a href="#featured-players" class="footer-link">Jerseys</a></li>
+          <li><a href="#featured-collections" class="footer-link">Collections</a></li>
+          <li><a href="#best-sellers" class="footer-link">Best Sellers</a></li>
+          <li><a href="#about" class="footer-link">About</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column footer-support">
+        <h3 class="footer-heading">Support</h3>
+        <ul class="footer-list">
+          <li><a href="#faq" class="footer-link">FAQ</a></li>
+          <li><a href="#" class="footer-link">Shipping Info</a></li>
+          <li><a href="#" class="footer-link">Returns</a></li>
+          <li><a href="#" class="footer-link">Size Guide</a></li>
+          <li><a href="#newsletter" class="footer-link">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column footer-social">
+        <h3 class="footer-heading">Follow Us</h3>
+        <ul class="social-list">
+          <li>
+            <a href="#" class="social-link" aria-label="Follow us on Instagram">
+              <span class="icon icon-instagram" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="social-link" aria-label="Follow us on Facebook">
+              <span class="icon icon-facebook" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="social-link" aria-label="Follow us on Twitter">
+              <span class="icon icon-twitter" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="social-link" aria-label="Follow us on YouTube">
+              <span class="icon icon-youtube" aria-hidden="true"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
     </div>
 
-    <div class="cart-items" id="cartItems">
-      <!-- Cart line items injected by app.js -->
-      <p class="cart-empty" id="cartEmptyMsg">Your bag is empty. Add a jersey to get started.</p>
+    <div class="footer-bottom">
+      <div class="container">
+        <p class="copyright">&copy; 2026 FIFA Jersey Store. All rights reserved.</p>
+      </div>
     </div>
-
-    <div class="cart-footer">
-      <div class="cart-subtotal-row">
-        <span>Subtotal</span>
-        <span id="cartSubtotal" class="cart-subtotal-value">$0.00</span>
-      </div>
-      <button class="checkout-btn" id="checkoutBtn">Checkout</button>
-      <p class="cart-fineprint">Shipping & taxes calculated at checkout.</p>
-    </div>
-  </aside>
-
-  <!-- Card template (cloned per product by app.js) -->
-  <template id="productCardTemplate">
-    <article class="product-card">
-      <div class="product-image">
-        <span class="product-number" data-number></span>
-        <div class="product-placeholder" data-image></div>
-        <span class="league-tag" data-league></span>
-      </div>
-      <div class="product-body">
-        <h3 class="product-name" data-name></h3>
-        <p class="product-price" data-price></p>
-
-        <label class="size-label" for="">
-          Size
-          <select class="size-select" data-size-select>
-            <option value="S">S</option>
-            <option value="M" selected>M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
-          </select>
-        </label>
-
-        <button class="add-to-cart-btn" data-add-btn>Add to Cart</button>
-      </div>
-    </article>
-  </template>
+  </footer>
 
   <script src="app.js"></script>
 </body>

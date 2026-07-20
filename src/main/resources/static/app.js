@@ -1,346 +1,324 @@
-/**
- * FutbolKits — app.js
- * -----------------------------------------------------------------------
- * Handles:
- *   1. Fetching the product catalog from the Java backend (GET /api/products)
- *   2. Rendering product cards from a <template>
- *   3. League filter + price sort (delegated to the backend via query params,
- *      with a client-side fallback/search on top so typing feels instant)
- *   4. Cart state (in-memory), badge count, drawer UI
- *   5. Posting the cart to the backend on checkout (POST /api/cart)
- * -----------------------------------------------------------------------
- * NOTE: If you're opening index.html directly as a file:// URL, fetch()
- * calls to the backend will fail CORS/security checks. Serve this folder
- * with a static server (or let the Spring Boot app serve it) while the
- * backend runs on http://localhost:8080.
- */
+/* ==========================================================================
+   FIFA JERSEY STORE — APP LOGIC
+   Vanilla JS, no dependencies. Handles: sticky navbar shadow, mobile menu,
+   search overlay, wishlist/cart counters, quick view, accordion (FAQ),
+   newsletter form, and image placeholders for empty src attributes.
+   ========================================================================== */
 
-// ---------------------------------------------------------------------
-// Config
-// ---------------------------------------------------------------------
-const API_BASE = "http://localhost:8080/api";
+(function () {
+  'use strict';
 
-// ---------------------------------------------------------------------
-// Application state
-// ---------------------------------------------------------------------
-const state = {
-  allProducts: [],   // full catalog as last fetched from the server
-  league: "all",     // currently selected league filter
-  sort: "none",      // "none" | "asc" | "desc"
-  searchTerm: "",     // free-text search
-  cart: [],           // { productId, name, price, size, qty, imageUrl }
-};
+  /* ------------------------------------------------------------------ */
+  /* State                                                               */
+  /* ------------------------------------------------------------------ */
+  var state = {
+    wishlist: new Set(),
+    cartCount: 0
+  };
 
-// ---------------------------------------------------------------------
-// DOM references
-// ---------------------------------------------------------------------
-const productGrid = document.getElementById("productGrid");
-const productCardTemplate = document.getElementById("productCardTemplate");
-const emptyState = document.getElementById("emptyState");
-const resultCount = document.getElementById("resultCount");
+  /* ------------------------------------------------------------------ */
+  /* Utilities                                                           */
+  /* ------------------------------------------------------------------ */
+  function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function qsa(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
-const searchInput = document.getElementById("searchInput");
-const sortSelect = document.getElementById("sortSelect");
-const leagueFiltersContainer = document.getElementById("leagueFilters");
-
-const cartTrigger = document.getElementById("cartTrigger");
-const cartBadge = document.getElementById("cartBadge");
-const cartDrawer = document.getElementById("cartDrawer");
-const cartOverlay = document.getElementById("cartOverlay");
-const cartClose = document.getElementById("cartClose");
-const cartItemsEl = document.getElementById("cartItems");
-const cartEmptyMsg = document.getElementById("cartEmptyMsg");
-const cartSubtotalEl = document.getElementById("cartSubtotal");
-const checkoutBtn = document.getElementById("checkoutBtn");
-
-// ---------------------------------------------------------------------
-// Init
-// ---------------------------------------------------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  fetchProducts();
-  bindEvents();
-});
-
-function bindEvents() {
-  searchInput.addEventListener("input", (e) => {
-    state.searchTerm = e.target.value.trim().toLowerCase();
-    renderProducts();
-  });
-
-  sortSelect.addEventListener("change", (e) => {
-    state.sort = e.target.value;
-    fetchProducts(); // re-fetch so backend sort param is exercised
-  });
-
-  leagueFiltersContainer.addEventListener("change", (e) => {
-    if (e.target.name === "league") {
-      state.league = e.target.value;
-      fetchProducts();
+  var toastEl = null;
+  var toastTimer = null;
+  function showToast(message) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      toastEl.setAttribute('role', 'status');
+      toastEl.setAttribute('aria-live', 'polite');
+      document.body.appendChild(toastEl);
     }
-  });
-
-  cartTrigger.addEventListener("click", openCart);
-  cartClose.addEventListener("click", closeCart);
-  cartOverlay.addEventListener("click", closeCart);
-  checkoutBtn.addEventListener("click", handleCheckout);
-}
-
-// ---------------------------------------------------------------------
-// Fetching products
-// ---------------------------------------------------------------------
-async function fetchProducts() {
-  productGrid.setAttribute("aria-busy", "true");
-
-  const params = new URLSearchParams();
-  if (state.league && state.league !== "all") params.set("league", state.league);
-  if (state.sort && state.sort !== "none") params.set("sort", state.sort);
-
-  const url = `${API_BASE}/products${params.toString() ? `?${params}` : ""}`;
-
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-    const data = await res.json();
-    state.allProducts = data;
-  } catch (err) {
-    console.error("Failed to load products from backend:", err);
-    // Fallback so the UI still demos nicely if the backend isn't running
-    state.allProducts = state.allProducts.length ? state.allProducts : FALLBACK_PRODUCTS;
-  } finally {
-    renderProducts();
-    productGrid.removeAttribute("aria-busy");
+    toastEl.textContent = message;
+    toastEl.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove('is-visible');
+    }, 2200);
   }
-}
 
-// ---------------------------------------------------------------------
-// Rendering
-// ---------------------------------------------------------------------
-function renderProducts() {
-  const term = state.searchTerm;
-
-  const visible = state.allProducts.filter((p) => {
-    if (!term) return true;
-    return (
-      p.name.toLowerCase().includes(term) ||
-      p.team.toLowerCase().includes(term) ||
-      p.league.toLowerCase().includes(term)
-    );
-  });
-
-  productGrid.innerHTML = "";
-
-  visible.forEach((product) => {
-    const node = productCardTemplate.content.cloneNode(true);
-
-    const numberEl = node.querySelector("[data-number]");
-    const leagueEl = node.querySelector("[data-league]");
-    const nameEl = node.querySelector("[data-name]");
-    const priceEl = node.querySelector("[data-price]");
-    const sizeSelect = node.querySelector("[data-size-select]");
-    const addBtn = node.querySelector("[data-add-btn]");
-
-    numberEl.textContent = shirtNumberFor(product.id);
-    leagueEl.textContent = product.league;
-    nameEl.textContent = product.name;
-    priceEl.textContent = formatPrice(product.price);
-
-    addBtn.addEventListener("click", () => {
-      addToCart(product, sizeSelect.value);
-      flashAdded(addBtn);
-    });
-
-    productGrid.appendChild(node);
-  });
-
-  resultCount.textContent = visible.length;
-  emptyState.hidden = visible.length !== 0;
-}
-
-/** Deterministic "shirt number" badge derived from the product id, purely decorative. */
-function shirtNumberFor(id) {
-  const num = Math.abs(hashCode(id)) % 23 + 1;
-  return `#${num}`;
-}
-
-function hashCode(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return hash;
-}
-
-function formatPrice(value) {
-  return `$${Number(value).toFixed(2)}`;
-}
-
-function flashAdded(button) {
-  const original = button.textContent;
-  button.textContent = "Added ✓";
-  button.classList.add("just-added");
-  setTimeout(() => {
-    button.textContent = original;
-    button.classList.remove("just-added");
-  }, 900);
-}
-
-// ---------------------------------------------------------------------
-// Cart logic
-// ---------------------------------------------------------------------
-function addToCart(product, size) {
-  const existing = state.cart.find((i) => i.productId === product.id && i.size === size);
-
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    state.cart.push({
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      size,
-      qty: 1,
+  /* ------------------------------------------------------------------ */
+  /* Image placeholders — avoid broken-image icons for empty src=""     */
+  /* ------------------------------------------------------------------ */
+  function initImagePlaceholders() {
+    qsa('img').forEach(function (img) {
+      if (!img.getAttribute('src')) {
+        img.removeAttribute('src');
+      }
     });
   }
 
-  renderCart();
-  updateCartBadge();
-}
-
-function updateQty(productId, size, delta) {
-  const item = state.cart.find((i) => i.productId === productId && i.size === size);
-  if (!item) return;
-
-  item.qty += delta;
-  if (item.qty <= 0) {
-    state.cart = state.cart.filter((i) => !(i.productId === productId && i.size === size));
+  /* ------------------------------------------------------------------ */
+  /* Sticky navbar shadow on scroll                                      */
+  /* ------------------------------------------------------------------ */
+  function initNavbarScroll() {
+    var navbar = qs('#navbar');
+    if (!navbar) return;
+    function update() {
+      if (window.scrollY > 8) {
+        navbar.classList.add('is-scrolled');
+      } else {
+        navbar.classList.remove('is-scrolled');
+      }
+    }
+    update();
+    window.addEventListener('scroll', update, { passive: true });
   }
 
-  renderCart();
-  updateCartBadge();
-}
+  /* ------------------------------------------------------------------ */
+  /* Mobile menu toggle                                                  */
+  /* ------------------------------------------------------------------ */
+  function initMobileMenu() {
+    var btn = qs('#hamburgerBtn');
+    var menu = qs('#mobileMenu');
+    if (!btn || !menu) return;
 
-function removeFromCart(productId, size) {
-  state.cart = state.cart.filter((i) => !(i.productId === productId && i.size === size));
-  renderCart();
-  updateCartBadge();
-}
+    function closeMenu() {
+      menu.hidden = true;
+      btn.setAttribute('aria-expanded', 'false');
+    }
+    function openMenu() {
+      menu.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+    }
 
-function cartCount() {
-  return state.cart.reduce((sum, i) => sum + i.qty, 0);
-}
-
-function cartSubtotal() {
-  return state.cart.reduce((sum, i) => sum + i.qty * i.price, 0);
-}
-
-function updateCartBadge() {
-  const count = cartCount();
-  cartBadge.textContent = count;
-  cartBadge.style.display = count > 0 ? "grid" : "none";
-}
-
-function renderCart() {
-  cartItemsEl.querySelectorAll(".cart-line").forEach((el) => el.remove());
-  cartEmptyMsg.hidden = state.cart.length > 0;
-
-  state.cart.forEach((item) => {
-    const line = document.createElement("div");
-    line.className = "cart-line";
-    line.innerHTML = `
-      <div class="cart-line-swatch"></div>
-      <div class="cart-line-info">
-        <h4>${escapeHtml(item.name)}</h4>
-        <div class="cart-line-meta">Size ${escapeHtml(item.size)}</div>
-        <div class="cart-line-controls">
-          <button class="qty-btn" data-action="dec" aria-label="Decrease quantity">−</button>
-          <span>${item.qty}</span>
-          <button class="qty-btn" data-action="inc" aria-label="Increase quantity">+</button>
-        </div>
-        <button class="cart-line-remove" data-action="remove">Remove</button>
-      </div>
-      <div class="cart-line-price">${formatPrice(item.price * item.qty)}</div>
-    `;
-
-    line.querySelector('[data-action="inc"]').addEventListener("click", () =>
-      updateQty(item.productId, item.size, 1)
-    );
-    line.querySelector('[data-action="dec"]').addEventListener("click", () =>
-      updateQty(item.productId, item.size, -1)
-    );
-    line.querySelector('[data-action="remove"]').addEventListener("click", () =>
-      removeFromCart(item.productId, item.size)
-    );
-
-    cartItemsEl.insertBefore(line, cartEmptyMsg);
-  });
-
-  cartSubtotalEl.textContent = formatPrice(cartSubtotal());
-  checkoutBtn.disabled = state.cart.length === 0;
-}
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-// ---------------------------------------------------------------------
-// Cart drawer open/close
-// ---------------------------------------------------------------------
-function openCart() {
-  cartDrawer.classList.add("open");
-  cartOverlay.classList.add("visible");
-}
-
-function closeCart() {
-  cartDrawer.classList.remove("open");
-  cartOverlay.classList.remove("visible");
-}
-
-// ---------------------------------------------------------------------
-// Checkout — POST /api/cart
-// ---------------------------------------------------------------------
-async function handleCheckout() {
-  if (state.cart.length === 0) return;
-
-  checkoutBtn.disabled = true;
-  checkoutBtn.textContent = "Processing…";
-
-  try {
-    const res = await fetch(`${API_BASE}/cart`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: state.cart, subtotal: cartSubtotal() }),
+    btn.addEventListener('click', function () {
+      var isOpen = btn.getAttribute('aria-expanded') === 'true';
+      isOpen ? closeMenu() : openMenu();
     });
 
-    if (!res.ok) throw new Error(`Checkout failed with status ${res.status}`);
+    qsa('.mobile-nav-link', menu).forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
 
-    const result = await res.json();
-    alert(result.message || "Order received! Thanks for supporting your team.");
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
+    });
+  }
 
-    state.cart = [];
-    renderCart();
+  /* ------------------------------------------------------------------ */
+  /* Search overlay                                                       */
+  /* ------------------------------------------------------------------ */
+  function initSearch() {
+    var openBtn = qs('#searchBtn');
+    var overlay = qs('#searchOverlay');
+    var closeBtn = qs('#searchClose');
+    var input = qs('#searchInput');
+    var form = qs('#searchForm');
+    if (!openBtn || !overlay) return;
+
+    function open() {
+      overlay.hidden = false;
+      if (input) input.focus();
+    }
+    function close() {
+      overlay.hidden = true;
+      openBtn.focus();
+    }
+
+    openBtn.addEventListener('click', function () {
+      overlay.hidden ? open() : close();
+    });
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !overlay.hidden) close();
+    });
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var query = (input && input.value.trim()) || '';
+        if (query) {
+          showToast('Searching for "' + query + '"\u2026');
+        }
+        close();
+        if (input) input.value = '';
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Wishlist (header count + per-card buttons)                          */
+  /* ------------------------------------------------------------------ */
+  function updateWishlistBadge() {
+    var badge = qs('#wishlistCount');
+    if (badge) badge.textContent = String(state.wishlist.size);
+  }
+
+  function initWishlist() {
+    updateWishlistBadge();
+
+    qsa('.product-card .wishlist-btn, .best-seller-card .wishlist-btn').forEach(function (btn, index) {
+      // Ensure every wishlist button has a stable identity for the demo state.
+      var id = btn.closest('[data-player]')
+        ? btn.closest('[data-player]').getAttribute('data-player')
+        : 'item-' + index;
+
+      btn.addEventListener('click', function () {
+        var nameEl = btn.closest('.product-card, .best-seller-card');
+        var name = nameEl ? (qs('.product-player-name, .best-seller-name', nameEl) || {}).textContent : 'Item';
+
+        if (state.wishlist.has(id)) {
+          state.wishlist.delete(id);
+          btn.classList.remove('is-active');
+          showToast((name || 'Item') + ' removed from wishlist');
+        } else {
+          state.wishlist.add(id);
+          btn.classList.add('is-active');
+          showToast((name || 'Item') + ' added to wishlist');
+        }
+        updateWishlistBadge();
+      });
+    });
+
+    var headerWishlistBtn = qs('#wishlistBtn');
+    if (headerWishlistBtn) {
+      headerWishlistBtn.addEventListener('click', function () {
+        var count = state.wishlist.size;
+        showToast(count === 0 ? 'Your wishlist is empty' : count + ' item(s) in your wishlist');
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Cart (header count + add-to-cart buttons)                           */
+  /* ------------------------------------------------------------------ */
+  function updateCartBadge() {
+    var badge = qs('#cartCount');
+    if (badge) badge.textContent = String(state.cartCount);
+  }
+
+  function initCart() {
     updateCartBadge();
-    closeCart();
-  } catch (err) {
-    console.error("Checkout error:", err);
-    alert("We couldn't reach the server to complete checkout. Please try again.");
-  } finally {
-    checkoutBtn.disabled = state.cart.length === 0;
-    checkoutBtn.textContent = "Checkout";
-  }
-}
 
-// ---------------------------------------------------------------------
-// Fallback data — only used if the Java backend is unreachable, so the
-// front end still has something to render during local UI development.
-// ---------------------------------------------------------------------
-const FALLBACK_PRODUCTS = [
-  { id: "bra-2026-home", name: "Brazil 2026 Home", team: "Brazil", league: "World Cup", price: 94.99 },
-  { id: "arg-2026-home", name: "Argentina 2026 Home", team: "Argentina", league: "World Cup", price: 94.99 },
-  { id: "fra-2026-away", name: "France 2026 Away", team: "France", league: "World Cup", price: 89.99 },
-  { id: "ita-retro-home", name: "Italy Retro Home", team: "Italy", league: "Serie A", price: 79.99 },
-  { id: "mci-2026-home", name: "Man City 2026 Home", team: "Manchester City", league: "Premier League", price: 84.99 },
-  { id: "rma-2026-home", name: "Real Madrid 2026 Home", team: "Real Madrid", league: "La Liga", price: 99.99 },
-];
+    qsa('.add-to-cart-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.cartCount += 1;
+        updateCartBadge();
+
+        var card = btn.closest('.product-card, .best-seller-card');
+        var name = card
+          ? (qs('.product-player-name, .best-seller-name', card) || {}).textContent
+          : 'Item';
+        showToast((name || 'Item') + ' added to cart');
+      });
+    });
+
+    var headerCartBtn = qs('#cartBtn');
+    if (headerCartBtn) {
+      headerCartBtn.addEventListener('click', function () {
+        showToast(state.cartCount === 0
+          ? 'Your cart is empty'
+          : state.cartCount + ' item(s) in your cart');
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Profile button (placeholder action)                                 */
+  /* ------------------------------------------------------------------ */
+  function initProfile() {
+    var btn = qs('#profileBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      showToast('Sign in to view your profile');
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Quick view (product cards)                                          */
+  /* ------------------------------------------------------------------ */
+  function initQuickView() {
+    qsa('.quick-view-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var card = btn.closest('.product-card');
+        var name = card ? (qs('.product-player-name', card) || {}).textContent : 'this jersey';
+        showToast('Quick view: ' + (name || 'this jersey'));
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Size selection (visual state only)                                  */
+  /* ------------------------------------------------------------------ */
+  function initSizeOptions() {
+    qsa('.product-sizes').forEach(function (group) {
+      qsa('.size-option', group).forEach(function (opt) {
+        opt.setAttribute('role', 'button');
+        opt.setAttribute('tabindex', '0');
+        function select() {
+          qsa('.size-option', group).forEach(function (o) {
+            o.style.borderColor = '';
+            o.style.backgroundColor = '';
+          });
+          opt.style.borderColor = 'var(--pitch-900)';
+          opt.style.backgroundColor = 'var(--chalk-dim)';
+        }
+        opt.addEventListener('click', select);
+        opt.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            select();
+          }
+        });
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* FAQ accordion                                                       */
+  /* ------------------------------------------------------------------ */
+  function initAccordion() {
+    qsa('.accordion-trigger').forEach(function (trigger) {
+      var panel = document.getElementById(trigger.getAttribute('aria-controls'));
+      if (!panel) return;
+
+      trigger.addEventListener('click', function () {
+        var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        trigger.setAttribute('aria-expanded', String(!isOpen));
+        panel.hidden = isOpen;
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Newsletter form                                                      */
+  /* ------------------------------------------------------------------ */
+  function initNewsletter() {
+    var form = qs('#newsletterForm');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = qs('#newsletterEmail', form);
+      var email = input ? input.value.trim() : '';
+      if (!email) return;
+      showToast('Thanks for joining the squad!');
+      form.reset();
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Init                                                                 */
+  /* ------------------------------------------------------------------ */
+  function init() {
+    initImagePlaceholders();
+    initNavbarScroll();
+    initMobileMenu();
+    initSearch();
+    initWishlist();
+    initCart();
+    initProfile();
+    initQuickView();
+    initSizeOptions();
+    initAccordion();
+    initNewsletter();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
