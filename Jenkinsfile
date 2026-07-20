@@ -1,11 +1,13 @@
-node {
-    stage('SCM Checkout') {
-        git 'https://github.com/srinathr1442/fifa-cup.git'
+node 
+stage('SCM Checkout') {
+    steps {
+        git branch: 'master', url: 'https://github.com/srinathr1442/worldcup.git'
     }
+}
     stage('Maven Build') {
         def mvnHome = tool name: 'Maven-3.9.16', type: 'maven'
         sh "${mvnHome}/bin/mvn clean package"
-        sh 'mv target/futbolkits-catalog*.war target/futbolkits-catalog.war'
+        sh 'mv target/worldcup*.war target/worldcup.war'
     }
     stage('SonarQube Analysis') {
         def mvn = tool 'Maven-3.9.16'
