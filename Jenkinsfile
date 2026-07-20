@@ -6,13 +6,19 @@ node {
     stage('Maven Build') {
         def mvnHome = tool name: 'Maven-3.9.16', type: 'maven'
         sh "${mvnHome}/bin/mvn clean package"
-        sh 'mv target/futbolkits-catalog.war target/worldcup.war' // <-- Updated this line
+        sh 'mv target/futbolkits-catalog.war target/worldcup.war'
     }
 
     stage('SonarQube Analysis') {
         def mvn = tool name: 'Maven-3.9.16', type: 'maven'
-        withSonarQubeEnv() {
-            sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=futbolkits-catalog -Dsonar.projectName='Futbolkits Catalog'"
+        // Wrap with credentials block to explicitly bind your 'admin' secret text
+        withCredentials([string(credentialsId: 'admin', variable: 'SONAR_TOKEN')]) {
+            withSonarQubeEnv() {
+                sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                    -Dsonar.projectKey=futbolkits-catalog \
+                    -Dsonar.projectName='Futbolkits Catalog' \
+                    -Dsonar.token=${SONAR_TOKEN}"
+            }
         }
     }
 
