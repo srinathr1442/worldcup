@@ -6,7 +6,7 @@ node {
     stage('Maven Build') {
         def mvnHome = tool name: 'Maven-3.9.16', type: 'maven'
         sh "${mvnHome}/bin/mvn clean package"
-        sh 'mv target/worldcup*.war target/worldcup.war'
+        sh 'mv target/futbolkits-catalog.war target/worldcup.war' // <-- Updated this line
     }
 
     stage('SonarQube Analysis') {
